@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.24)
 project(pine)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -17,4 +17,4 @@ add_library(bit_pattern SHARED
         ${CMAKE_SOURCE_DIR}/inc/bit_pattern.hpp)
 
 add_executable(main ${CMAKE_SOURCE_DIR}/src/main.cpp)
-target_link_libraries(main PUBLIC bit_pattern)
+target_link_libraries(main PUBLIC bit_pattern base64)

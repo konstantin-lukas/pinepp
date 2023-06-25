@@ -1,2 +1,2 @@
-# pine
-PINE stands for "Programming Interface for Nonspecific Extensions" and is a mixed purpose library that implements some utilities that are missing from the standard library or have a difficult-to-use interface in the libraries that do implement them.
+# PINE++
+PINE++ stands for "Programming Interface for New and Easy C++" and is a general utility library that aims for ease of use and providing utilites and datastructures missing from the standard library.

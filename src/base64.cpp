@@ -5,11 +5,11 @@
 #include <iostream>
 #include "../inc/base64.hpp"
 
-std::string pine::base64_encode(const std::string& input) {
+std::string pine_pp::base64_encode(const std::string& input) {
     std::string output;
     return output;
 }
-std::string pine::base64_encode(const pine::bit_pattern& input, bool padding) {
+std::string pine_pp::base64_encode(const pine_pp::bit_pattern& input, bool padding) {
     auto fill_zeroes = (6 - (input.size() % 6)) % 6;
     std::string base64;
     size_t i;

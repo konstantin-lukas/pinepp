@@ -7,7 +7,7 @@
 #include <cstddef>
 #include <ostream>
 #include <vector>
-namespace pine {
+namespace pine_pp {
     class bit_pattern {
     public:
         bit_pattern() = delete;

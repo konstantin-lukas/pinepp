@@ -2,8 +2,8 @@
 // Created by konstantin on 25.06.23.
 //
 
-#ifndef PINE_TRIE_HPP
-#define PINE_TRIE_HPP
+#ifndef PINEPP_TRIE_HPP
+#define PINEPP_TRIE_HPP
 #include <cstddef>
 #include <unordered_map>
 #include <memory>
@@ -115,4 +115,4 @@ namespace pine_pp {
 
 
 
-#endif //PINE_TRIE_HPP
+#endif //PINEPP_TRIE_HPP

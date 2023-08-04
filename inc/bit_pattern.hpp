@@ -2,8 +2,8 @@
 // Created by konstantin on 31.05.23.
 //
 
-#ifndef PINE_BIT_PATTERN_HPP
-#define PINE_BIT_PATTERN_HPP
+#ifndef PINEPP_BIT_PATTERN_HPP
+#define PINEPP_BIT_PATTERN_HPP
 #include <cstddef>
 #include <ostream>
 #include <vector>
@@ -44,4 +44,4 @@ namespace pine_pp {
     };
 }
 
-#endif //PINE_BIT_PATTERN_HPP
+#endif //PINEPP_BIT_PATTERN_HPP

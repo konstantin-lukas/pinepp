@@ -2,8 +2,8 @@
 // Created by konstantin on 31.05.23.
 //
 
-#ifndef PINE_BASE64_HPP
-#define PINE_BASE64_HPP
+#ifndef PINEPP_BASE64_HPP
+#define PINEPP_BASE64_HPP
 #include <string>
 #include "bit_pattern.hpp"
 
@@ -21,4 +21,4 @@ namespace pine_pp {
 
 
 
-#endif //PINE_BASE64_HPP
+#endif //PINEPP_BASE64_HPP

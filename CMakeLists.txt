@@ -34,3 +34,7 @@ ADD_TEST(NAME trie COMMAND trie_test)
 add_executable(utility_test ${CMAKE_SOURCE_DIR}/test/utility.test.cpp)
 target_link_libraries(utility_test gtest_main pinepp)
 ADD_TEST(NAME utility COMMAND utility_test)
+
+add_executable(concepts_test ${CMAKE_SOURCE_DIR}/test/concepts.test.cpp)
+target_link_libraries(concepts_test gtest_main pinepp)
+ADD_TEST(NAME concepts COMMAND concepts_test)

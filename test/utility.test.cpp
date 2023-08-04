@@ -31,3 +31,19 @@ TEST(Unsigned128BitInt, PrintsTheCorrectNumber) {
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_EQ(output, "6");
 }
+
+TEST(PrintIterable, PrintsIterableContainersAsCommaSeparatedLists) {
+    using namespace pine_pp;
+
+    std::vector vec{5,2,53,3,7,658,21};
+    testing::internal::CaptureStdout();
+    print_iterable(vec);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "[5, 2, 53, 3, 7, 658, 21]");
+
+    vec.emplace_back(363);
+    testing::internal::CaptureStdout();
+    print_iterable(vec);
+    output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "[5, 2, 53, 3, 7, 658, 21, 363]");
+}

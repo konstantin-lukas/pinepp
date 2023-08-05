@@ -4,6 +4,6 @@
 
 #include "utility.hpp"
 
-namespace pine_pp {
+namespace pinepp {
 
 }

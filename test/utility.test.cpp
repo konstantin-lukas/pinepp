@@ -12,7 +12,7 @@ TEST(IsClass, IsTrueIffCalledWithClassType) {
     typedef char A[5];
     typedef X B[5];
     typedef X C;
-    using namespace pine_pp;
+    using namespace pinepp;
     EXPECT_TRUE(is_class<X>::value);
     EXPECT_TRUE(is_class<Y>::value);
     EXPECT_TRUE(is_class<std::string>::value);
@@ -23,17 +23,8 @@ TEST(IsClass, IsTrueIffCalledWithClassType) {
     EXPECT_TRUE(is_class<C>::value);
 }
 
-TEST(Unsigned128BitInt, PrintsTheCorrectNumber) {
-    using namespace pine_pp;
-    uint128_t i{6};
-    testing::internal::CaptureStdout();
-    std::cout << i;
-    std::string output = testing::internal::GetCapturedStdout();
-    EXPECT_EQ(output, "6");
-}
-
 TEST(PrintIterable, PrintsIterableContainersAsCommaSeparatedLists) {
-    using namespace pine_pp;
+    using namespace pinepp;
 
     std::vector vec{5,2,53,3,7,658,21};
     testing::internal::CaptureStdout();

@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 #include "concepts.hpp"
-namespace pine_pp {
+namespace pinepp {
     template <char_type T = char>
     // TODO: COPY/MOVE SEMANTICS
     // TODO: DELETER (NO SMART PTRS)

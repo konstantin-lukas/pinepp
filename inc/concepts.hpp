@@ -5,7 +5,7 @@
 #ifndef PINEPP_CONCEPTS_H
 #define PINEPP_CONCEPTS_H
 #include <iterator>
-namespace pine_pp {
+namespace pinepp {
     template <typename T>
     concept iterable = requires(T t) {
         std::begin(t);

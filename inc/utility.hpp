@@ -8,7 +8,7 @@
 #include <iostream>
 #include <iterator>
 #include "concepts.hpp"
-namespace pine_pp {
+namespace pinepp {
     template<typename T>
     class is_class {
     private:
@@ -18,32 +18,14 @@ namespace pine_pp {
         constexpr static bool value = test<T>(0);
     };
 
-    typedef struct uint128_t {
-    public:
-        explicit uint128_t(uint64_t value) : m_First(value), m_Second(0) {}
-        friend std::ostream& operator<<(std::ostream& os, const pine_pp::uint128_t& value) {
-            if (value.m_Second != 0) {
-                os << value.m_Second;
-                os << value.m_First;
-            } else {
-                os << value.m_First;
-            }
-
-            return os;
-        }
-    private:
-        uint64_t m_First;
-        uint64_t m_Second;
-    } uint128_t;
-
     template <printable_iterable T>
     std::ostream& print_iterable (const T& iterable, std::ostream& os) {
         os << '[';
         const std::string separator{", "};
-        for (const auto& element : iterable) {
-            os << element;
-            if (&element != &iterable.back())
+        for (auto it = std::begin(iterable); it != std::end(iterable); ++it) {
+            if (it != std::begin(iterable))
                 os << separator;
+            os << *it;
         }
         os << ']';
         return os;

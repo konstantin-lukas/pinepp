@@ -5,7 +5,7 @@
 #include "trie.hpp"
 #include "gtest/gtest.h"
 TEST(TrieInsert, OnlyAddsExactWord) {
-    pine_pp::trie<char> trie{};
+    pinepp::trie<char> trie{};
     std::string a = "Hello";
     EXPECT_NO_THROW(trie.insert(a));
     EXPECT_TRUE(trie.contains("Hello"));
@@ -20,7 +20,7 @@ TEST(TrieInsert, OnlyAddsExactWord) {
 }
 
 TEST(StaticTrieInsert, OnlyAddsExactWord) {
-    pine_pp::static_trie<char> trie{5,"Helo!"};
+    pinepp::static_trie<char> trie{5, "Helo!"};
     std::string a = "Hello";
     EXPECT_NO_THROW(trie.insert(a));
     EXPECT_TRUE(trie.contains("Hello"));

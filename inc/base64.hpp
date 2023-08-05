@@ -7,7 +7,7 @@
 #include <string>
 #include "bit_pattern.hpp"
 
-namespace pine_pp {
+namespace pinepp {
     constexpr static char BASE64_TABLE[64] = {
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
             'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',

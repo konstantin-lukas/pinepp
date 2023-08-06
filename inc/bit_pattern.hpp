@@ -99,12 +99,12 @@ namespace pinepp {
         /**
          * @returns Shifts the pattern left \p n bits. Copies the overflowing bits to the other side.
          */
-        bit_pattern operator<<(int n) const;
+        bit_pattern operator<<(uint64_t n) const;
 
         /**
          * @returns Shifts the pattern right \p n bits. Copies the overflowing bits to the other side.
          */
-        bit_pattern operator>>(int n) const;
+        bit_pattern operator>>(uint64_t n) const;
 
         /**
          * @returns Concatenates two patterns
@@ -118,14 +118,33 @@ namespace pinepp {
         bit_pattern& operator=(const bit_pattern& other);
 
         /**
+         * @details Replaces the current pattern with the pattern represented by \p str.
+         * @param str A string representing the new pattern to use
+         */
+        bit_pattern& operator=(const std::string& str);
+
+        /**
          * @details Move assignment operator of the bit_pattern class
          * @param other The pattern to move from. Leaves the moved-from pattern in an undefined but valid state.
          */
         bit_pattern& operator=(bit_pattern&& other) noexcept;
+
+        /**
+         * @details Resizes the bit pattern. if \p b doesn't equal the current size, bits get either cut off or
+         * padding bits with value 0 get inserted.
+         * @param n The new size of the bit pattern.
+         */
+        bit_pattern& resize(size_t n);
+
+        /**
+         * @returns A string representing the bit pattern
+         */
+        [[nodiscard]] std::string str() const;
     private:
         std::vector<uint8_t> m_RawBytes{};
         std::size_t m_Len{0};
         friend std::ostream& operator<<(std::ostream& os, const bit_pattern& pattern);
+        void from_string(const std::string& str);
     };
 }
 

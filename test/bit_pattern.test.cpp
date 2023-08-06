@@ -314,3 +314,161 @@ TEST(BitPatternTildeOperator, ShouldPerformALogicalNegationAndReturnTheResult) {
     output = testing::internal::GetCapturedStdout();
     EXPECT_EQ(output, "0101");
 }
+
+TEST(BitPatternLeftShiftOperator, ShiftsTheBitsInThePatternLeftByNCharactersAndAttachesOverflowingBitsOnTheRight) {
+    using namespace pinepp;
+    bit_pattern bp{"1011101010010100"};
+    testing::internal::CaptureStdout();
+    std::cout << (bp << 3);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "1101010010100101");
+}
+
+TEST(BitPatternLeftShiftOperator, CanShiftDistancesLongerThanOneByte) {
+    using namespace pinepp;
+    bit_pattern bp{"1011101010010100"};
+    testing::internal::CaptureStdout();
+    std::cout << (bp << 10);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "0101001011101010");
+
+    testing::internal::CaptureStdout();
+    std::cout << (bp << 20);
+    output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "1010100101001011");
+}
+
+TEST(BitPatternLeftShiftOperator, CanHandlePatternsWhoseLengthIsntAMultipleOfEight) {
+    using namespace pinepp;
+    bit_pattern bp{"1001011101010010100"};
+    testing::internal::CaptureStdout();
+    std::cout << (bp << 10);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "0100101001001011101");
+
+    testing::internal::CaptureStdout();
+    std::cout << (bp << 20);
+    output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "0010111010100101001");
+
+    bp = bit_pattern{"10010"};
+    testing::internal::CaptureStdout();
+    std::cout << (bp << 3);
+    output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "10100");
+}
+
+
+TEST(BitPatternRightShiftOperator, ShiftsTheBitsInThePatternRightByNCharactersAndAttachesOverflowingBitsOnTheLeft) {
+    using namespace pinepp;
+    bit_pattern bp{"1011101010010100"};
+    testing::internal::CaptureStdout();
+    std::cout << (bp >> 3);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "1001011101010010");
+}
+
+TEST(BitPatternRightShiftOperator, CanShiftDistancesLongerThanOneByte) {
+    using namespace pinepp;
+    bit_pattern bp{"1011101010010100"};
+    testing::internal::CaptureStdout();
+    std::cout << (bp >> 10);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "1010010100101110");
+
+    testing::internal::CaptureStdout();
+    std::cout << (bp >> 20);
+    output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "0100101110101001");
+}
+
+TEST(BitPatternRightShiftOperator, CanHandlePatternsWhoseLengthIsntAMultipleOfEight) {
+    using namespace pinepp;
+    bit_pattern bp{"1001011101010010100"};
+    testing::internal::CaptureStdout();
+    std::cout << (bp >> 10);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "1010010100100101110");
+
+    testing::internal::CaptureStdout();
+    std::cout << (bp >> 20);
+    output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "0100101110101001010");
+
+    bp = bit_pattern{"10010"};
+    testing::internal::CaptureStdout();
+    std::cout << (bp >> 3);
+    output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "01010");
+}
+
+TEST(BitPatternPlusOperator, ConcatenatesToBitPatterns) {
+    using namespace pinepp;
+    bit_pattern bp1{"1001011101010010100"};
+    bit_pattern bp2{"10100"};
+    testing::internal::CaptureStdout();
+    std::cout << (bp1 + bp2);
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "100101110101001010010100");
+
+    bp2 = bit_pattern{};
+    testing::internal::CaptureStdout();
+    std::cout << (bp1 + bp2);
+    output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "1001011101010010100");
+}
+
+TEST(BitPatternCopyAssignmentOperator, PerformsADeepCopy) {
+    using namespace pinepp;
+    bit_pattern bp1{"1001011101010010100"};
+    bit_pattern bp2{};
+    bp2 = bp1;
+    bp1.set_bit(0, true);
+    testing::internal::CaptureStdout();
+    std::cout << bp2;
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "1001011101010010100");
+}
+
+TEST(BitPatternStringAssignmentOperator, OverwritesTheCurrentPatternWithThePatternRepresentedByString) {
+    using namespace pinepp;
+    bit_pattern bp{};
+    testing::internal::CaptureStdout();
+    std::cout << bp;
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "");
+
+    bp = "01";
+    testing::internal::CaptureStdout();
+    std::cout << bp;
+    output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "01");
+
+    bp = "0xff1";
+    testing::internal::CaptureStdout();
+    std::cout << bp;
+    output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "111111110001");
+
+    bp = "000000000000000010101111111111111111111111111111000000000000000101010010101000000101010101";
+    testing::internal::CaptureStdout();
+    std::cout << bp;
+    output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "000000000000000010101111111111111111111111111111000000000000000101010010101000000101010101");
+}
+
+TEST(BitPatternResizeFunction, DoesntDoAnythingIfTheNewSizeIsTheSameAsTheOldOne) {
+    using namespace pinepp;
+    bit_pattern bp{"0111011101"};
+    bp.resize(7);
+    testing::internal::CaptureStdout();
+    std::cout << bp;
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "1011101");
+
+    bp.resize(12);
+    testing::internal::CaptureStdout();
+    std::cout << bp;
+    output = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(output, "000001011101");
+}

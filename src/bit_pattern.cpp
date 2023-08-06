@@ -11,9 +11,14 @@
 pinepp::bit_pattern::bit_pattern() : m_Len(0) {}
 
 pinepp::bit_pattern::bit_pattern(const std::string& str) {
+    from_string(str);
+}
+
+void pinepp::bit_pattern::from_string(const std::string& str) {
+    m_RawBytes.clear();
     if (std::regex pattern{"^[01]+$"}; std::regex_match(str, pattern)) {
         m_Len = str.size();
-        m_RawBytes.resize((m_Len / 8) + 1, 0);
+        m_RawBytes.resize(((m_Len - 1) / 8) + 1, 0);
         int counter = 0;
         for (auto c : std::ranges::reverse_view(str)) {
             if (c == '1')
@@ -22,7 +27,7 @@ pinepp::bit_pattern::bit_pattern(const std::string& str) {
         }
     } else if (pattern = "^0[xX][0-9a-fA-F]+$"; std::regex_match(str, pattern)) {
         m_Len = (str.size() - 2) * 4;
-        m_RawBytes.resize((m_Len / 8) + 1, 0);
+        m_RawBytes.resize(((m_Len - 1) / 8) + 1, 0);
         size_t counter = 0;
         auto it = str.rbegin();
         while (counter < m_Len) {
@@ -64,11 +69,22 @@ void pinepp::bit_pattern::set_bit(int index, bool value) {
 }
 
 void pinepp::bit_pattern::reverse() {
-    std::stringstream o{};
-    o << *this;
-    auto c = o.str();
+    auto c = this->str();
     std::reverse(c.begin(), c.end());
     *this = bit_pattern{c};
+}
+
+pinepp::bit_pattern& pinepp::bit_pattern::operator=(const pinepp::bit_pattern& other) {
+    if (&other == this)
+        return *this;
+    this->m_Len = other.m_Len;
+    this->m_RawBytes = other.m_RawBytes;
+    return *this;
+}
+
+pinepp::bit_pattern& pinepp::bit_pattern::operator=(const std::string& str) {
+    from_string(str);
+    return *this;
 }
 
 pinepp::bit_pattern& pinepp::bit_pattern::operator=(pinepp::bit_pattern&& other) noexcept {
@@ -126,6 +142,56 @@ pinepp::bit_pattern pinepp::bit_pattern::operator~() const {
     return rv;
 }
 
+std::string pinepp::bit_pattern::str() const {
+    std::stringstream ss;
+    ss << *this;
+    return ss.str();
+}
+
+pinepp::bit_pattern& pinepp::bit_pattern::resize(size_t n) {
+    if (m_Len == n)
+        return *this;
+    else if (std::string str = this->str(); m_Len > n) {
+        from_string(str.substr(str.size() - n));
+    } else {
+        from_string(std::string(n - str.size(), '0') + str);
+    }
+    return *this;
+}
+
+pinepp::bit_pattern pinepp::bit_pattern::operator<<(uint64_t n) const {
+    uint64_t shift = n % m_Len;
+    if (m_Len <= 1 || shift == 0)
+        return *this;
+    auto str = this->str();
+    std::string firstPart = str.substr(0, shift);
+    std::string secondPart = str.substr(shift);
+    bit_pattern rv{secondPart + firstPart};
+    return rv;
+}
+
+pinepp::bit_pattern pinepp::bit_pattern::operator>>(uint64_t n) const {
+    uint64_t shift = n % m_Len;
+    if (m_Len <= 1 || shift == 0)
+        return *this;
+    auto str = this->str();
+    std::string firstPart = str.substr(0, str.size() - shift);
+    std::string secondPart = str.substr(str.size() - shift);
+    bit_pattern rv{secondPart + firstPart};
+    return rv;
+}
+
+
+pinepp::bit_pattern pinepp::bit_pattern::operator+(const bit_pattern& other) const {
+    if (this->m_Len > 0 && other.m_Len > 0) {
+        return bit_pattern{this->str() + other.str()};
+    } else if (this->m_Len == 0 && other.m_Len > 0)
+        return other;
+    else if (this->m_Len > 0 && other.m_Len == 0)
+        return *this;
+    else
+        return bit_pattern{};
+}
 
 namespace pinepp {
     std::ostream &operator<<(std::ostream &os, const bit_pattern &pattern) {

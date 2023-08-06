@@ -24,7 +24,9 @@ add_library(pinepp SHARED
         ${CMAKE_SOURCE_DIR}/inc/utility.hpp
         ${CMAKE_SOURCE_DIR}/src/utility.cpp
         ${CMAKE_SOURCE_DIR}/inc/concepts.hpp
-        ${CMAKE_SOURCE_DIR}/inc/trie.hpp)
+        ${CMAKE_SOURCE_DIR}/inc/trie.hpp
+        ${CMAKE_SOURCE_DIR}/src/timer.cpp
+        ${CMAKE_SOURCE_DIR}/inc/timer.hpp)
 
 enable_testing()
 add_executable(trie_test ${CMAKE_SOURCE_DIR}/test/trie.test.cpp)
@@ -42,3 +44,7 @@ ADD_TEST(NAME concepts COMMAND concepts_test)
 add_executable(bit_pattern_test ${CMAKE_SOURCE_DIR}/test/bit_pattern.test.cpp)
 target_link_libraries(bit_pattern_test gtest_main pinepp)
 ADD_TEST(NAME bit_pattern COMMAND bit_pattern_test)
+
+add_executable(timer_test ${CMAKE_SOURCE_DIR}/test/timer.test.cpp)
+target_link_libraries(timer_test gtest_main pinepp)
+ADD_TEST(NAME timer COMMAND timer_test)

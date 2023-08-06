@@ -29,5 +29,10 @@ TEST(Timer, StopsTheTime) {
     t.start();
     auto v1 = t.get_ns();
     auto v2 = t.get_ns();
-    EXPECT_LE(v1, v2);
+    EXPECT_LT(v1, v2);
+    struct timespec ts{0,100000};
+    v1 = t.get_ns();
+    nanosleep(&ts, nullptr);
+    v2 = t.get_ns();
+    EXPECT_GT(v2 - v1, 100000);
 }

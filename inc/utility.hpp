@@ -35,6 +35,25 @@ namespace pinepp {
     void print_iterable (const T& iterable) {
         print_iterable<T>(iterable, std::cout);
     }
+
+    /**
+     * @brief Enum class representing tools that can be used to make http requests
+     */
+    enum class http_tools : uint8_t { CURL, WGET };
+
+    /**
+     * @details Fetches a resource from a URL by making an HTTP request and saves it as a file.
+     * @param url The URL to fetch.
+     * @param filepath The location where to save the file.
+     */
+    void fetch(const std::string& url, const std::string& filepath, http_tools tool = http_tools::CURL);
+
+    /**
+     * @details Fetches a resource from a URL by making an HTTP request.
+     * @param url The URL to fetch.
+     * @param tool The tool to use to make the http request. Defaults to cURL.
+     */
+    std::string fetch(const std::string& url, http_tools tool = http_tools::CURL);
 }
 
 

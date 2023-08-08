@@ -3,6 +3,8 @@
 //
 
 #include <string>
+#include <regex>
+#include <fstream>
 #include "gtest/gtest.h"
 #include "utility.hpp"
 
@@ -37,4 +39,42 @@ TEST(PrintIterable, PrintsIterableContainersAsCommaSeparatedLists) {
     print_iterable(vec);
     output = testing::internal::GetCapturedStdout();
     EXPECT_EQ(output, "[5, 2, 53, 3, 7, 658, 21, 363]");
+}
+
+void fetchTestString(pinepp::http_tools tool) {
+    using namespace pinepp;
+    const auto reply = fetch("https://www.google.com");
+    std::regex regex("^<!DOCTYPE html>", std::regex_constants::icase);
+    EXPECT_TRUE(regex_search(reply,regex));
+}
+
+void fetchTestFile(pinepp::http_tools tool) {
+    using namespace pinepp;
+    std::string fp = "/tmp/test.html";
+    std::string resource = "https://konstantinlukas.de";
+    fetch(resource, fp, tool);
+    std::ifstream file{fp};
+    if (file.is_open()) {
+        std::string contents((std::istreambuf_iterator<char>(file)),
+                             std::istreambuf_iterator<char>());
+        EXPECT_EQ(contents, fetch(resource, tool));
+    } else {
+        FAIL();
+    }
+}
+
+TEST(Fetch, CanUseCurlToRetrieveAResourceViaHTTPAndReturnItAsAString) {
+    fetchTestString(pinepp::http_tools::CURL);
+}
+
+TEST(Fetch, CanUseCurlToRetrieveAResourceViaHTTPAndSaveItInAFile) {
+    fetchTestFile(pinepp::http_tools::CURL);
+}
+
+TEST(Fetch, CanUseWgetToRetrieveAResourceViaHTTPAndReturnItAsAString) {
+    fetchTestString(pinepp::http_tools::WGET);
+}
+
+TEST(Fetch, CanUseWgetToRetrieveAResourceViaHTTPAndSaveItInAFile) {
+    fetchTestFile(pinepp::http_tools::WGET);
 }

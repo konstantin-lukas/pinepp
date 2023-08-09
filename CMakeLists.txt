@@ -48,3 +48,7 @@ ADD_TEST(NAME bit_pattern COMMAND bit_pattern_test)
 add_executable(timer_test ${CMAKE_SOURCE_DIR}/test/timer.test.cpp)
 target_link_libraries(timer_test gtest_main pinepp)
 ADD_TEST(NAME timer COMMAND timer_test)
+
+add_executable(base64_test ${CMAKE_SOURCE_DIR}/test/base64.test.cpp)
+target_link_libraries(base64_test gtest_main pinepp)
+ADD_TEST(NAME base64 COMMAND base64_test)

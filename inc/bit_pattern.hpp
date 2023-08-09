@@ -74,7 +74,7 @@ namespace pinepp {
          * @returns An integer that is either 0 or 1. This integer is a representation of the bit in the array
          * and does not have the same address.
          */
-        int operator[](int) const;
+        int operator[](unsigned int) const;
 
         /**
          * @returns The result of an AND operation on both patterns with the length of the shorter pattern

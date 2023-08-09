@@ -96,7 +96,7 @@ pinepp::bit_pattern& pinepp::bit_pattern::operator=(pinepp::bit_pattern&& other)
     return *this;
 }
 
-int pinepp::bit_pattern::operator[](int index) const {
+int pinepp::bit_pattern::operator[](unsigned int index) const {
     return m_RawBytes[index / 8] & (1 << (index % 8)) ? 1 : 0;
 }
 

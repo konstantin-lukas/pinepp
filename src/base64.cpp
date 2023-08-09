@@ -6,6 +6,13 @@
 #include "base64.hpp"
 
 std::string pinepp::base64_encode(const std::string& str) {
+    constexpr static char BASE64_TABLE[64] = {
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+            'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+            'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'
+    };
+
     std::string rv;
     const auto byte_count = str.size();
     auto bytes_in_whole_blocks = 3 * (int)(byte_count / 3);

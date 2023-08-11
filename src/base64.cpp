@@ -13,7 +13,8 @@ std::string pinepp::base64_encode(const std::string& str) {
             'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'
     };
 
-    std::string rv;
+    std::string rv{};
+    rv.reserve((size_t)((double)str.size() * 1.25));
     const auto byte_count = str.size();
     auto bytes_in_whole_blocks = 3 * (int)(byte_count / 3);
 
@@ -46,6 +47,7 @@ std::string pinepp::base64_encode(const std::string& str) {
         rv.push_back('=');
     }
 
+    rv.shrink_to_fit();
     return rv;
 }
 
@@ -64,6 +66,7 @@ std::string pinepp::base64_decode(const std::string& base64) {
         padding_len++;
 
     std::string rv{};
+    rv.reserve((size_t)((double)base64.size() * 0.75));
     uint8_t idx[4];
     for (auto i = decltype(char_count){0}; i < char_count; i += 4) {
         for (int j = 0; j < 4; ++j) {
@@ -93,5 +96,6 @@ std::string pinepp::base64_decode(const std::string& base64) {
         }
     }
 
+    rv.shrink_to_fit();
     return rv;
 }

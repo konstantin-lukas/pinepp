@@ -27,10 +27,10 @@ void pinepp::bit_pattern::from_string(const std::string& str) {
         }
     } else if (pattern = "^0[xX][0-9a-fA-F]+$"; std::regex_match(str, pattern)) {
         m_Len = (str.size() - 2) * 4;
-        m_RawBytes.resize(((m_Len - 1) / 8) + 1, 0);
+        m_RawBytes.resize((m_Len - 1 / 8) + 1, 0);
         size_t counter = 0;
         auto it = str.rbegin();
-        while (counter < m_Len) {
+        while (counter < str.size()) {
             uint8_t digit = 0;
 
             if (*it >= '1' && *it <= '9')

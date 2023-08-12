@@ -96,13 +96,6 @@ namespace pinepp {
             }
             m_Root = new T*[m_Alphabet.size()]{nullptr};
         };
-        void recursive_delete(T** node) {
-            for (decltype(m_Alphabet.size()) i = 0; i < m_Alphabet.size(); ++i) {
-                if (node[i])
-                    recursive_delete((T**)node[i]);
-            }
-            delete[] node;
-        }
         constexpr ~basic_static_trie() {
             recursive_delete(m_Root);
         }
@@ -146,6 +139,13 @@ namespace pinepp {
             return m_Size;
         }
     private:
+        void recursive_delete(T** node) {
+            for (decltype(m_Alphabet.size()) i = 0; i < m_Alphabet.size(); ++i) {
+                if (node[i])
+                    recursive_delete((T**)node[i]);
+            }
+            delete[] node;
+        }
         const std::basic_string<T> m_Alphabet;
         const std::size_t m_WordLength;
         std::size_t m_Size;

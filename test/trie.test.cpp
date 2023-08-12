@@ -35,10 +35,10 @@ TYPED_TEST(TrieTest, OnlyAddsExactWord) {
         c = u"Hella";
         d = u"Hello!";
     } else if constexpr (std::same_as<CharT, char32_t>) {
-        a = U"Hello";
-        b = U"Hell";
-        c = U"Hella";
-        d = U"Hello!";
+        a = U"こんにちは";
+        b = U"こんにち";
+        c = U"こんにちわ";
+        d = U"こんにちは！";
     }
     pinepp::basic_trie<CharT> trie{};
     EXPECT_NO_THROW(trie.insert(a));
@@ -96,11 +96,11 @@ TYPED_TEST(StaticTrieTest, OnlyAddsExactWord) {
         d = u"Hello!";
         alphabet = u"Helo!";
     } else if constexpr (std::same_as<CharT, char32_t>) {
-        a = U"Hello";
-        b = U"Hell";
-        c = U"Hella";
-        d = U"Hello!";
-        alphabet = U"Helo!";
+        a = U"こんにちは";
+        b = U"こんにち";
+        c = U"こんにちわ";
+        d = U"こんにちは！";
+        alphabet = U"こんにちは！";
     }
     pinepp::basic_static_trie<CharT> trie{5, alphabet};
     EXPECT_NO_THROW(trie.insert(a));

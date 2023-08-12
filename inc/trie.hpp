@@ -83,8 +83,7 @@ namespace pinepp {
         constexpr basic_static_trie(const std::size_t wordLength, const std::basic_string<T>& alphabet) :
         m_Alphabet(alphabet),
         m_WordLength(wordLength),
-        m_Size(0),
-        m_Root(new T*[m_Alphabet.size()]{nullptr}) {
+        m_Size(0) {
             if (wordLength == 0)
                 throw std::invalid_argument("Word length has to be at least one");
             if (alphabet.size() == 0)
@@ -95,7 +94,18 @@ namespace pinepp {
                     throw std::invalid_argument("Alphabet may only contain unique characters");
                 seenCharacters.insert(c);
             }
+            m_Root = new T*[m_Alphabet.size()]{nullptr};
         };
+        void recursive_delete(T** node) {
+            for (decltype(m_Alphabet.size()) i = 0; i < m_Alphabet.size(); ++i) {
+                if (node[i])
+                    recursive_delete((T**)node[i]);
+            }
+            delete[] node;
+        }
+        constexpr ~basic_static_trie() {
+            recursive_delete(m_Root);
+        }
         constexpr void insert(const std::basic_string<T>& string) {
             if (string.size() != m_WordLength)
                 throw std::length_error{"Length of string does not match word size of trie."};
@@ -142,16 +152,16 @@ namespace pinepp {
         T** m_Root;
     };
 
-    typedef basic_trie<char> trie;
-    typedef basic_static_trie<char> static_trie;
-    typedef basic_trie<wchar_t> wtrie;
-    typedef basic_static_trie<wchar_t> wstatic_trie;
-    typedef basic_trie<char8_t> u8trie;
-    typedef basic_static_trie<char8_t> u8static_trie;
-    typedef basic_trie<char16_t> u16trie;
-    typedef basic_static_trie<char16_t> u16static_trie;
-    typedef basic_trie<char32_t> u32trie;
-    typedef basic_static_trie<char32_t> u32static_trie;
+    [[maybe_unused]] typedef basic_trie<char> trie;
+    [[maybe_unused]] typedef basic_static_trie<char> static_trie;
+    [[maybe_unused]] typedef basic_trie<wchar_t> wtrie;
+    [[maybe_unused]] typedef basic_static_trie<wchar_t> wstatic_trie;
+    [[maybe_unused]] typedef basic_trie<char8_t> u8trie;
+    [[maybe_unused]] typedef basic_static_trie<char8_t> u8static_trie;
+    [[maybe_unused]] typedef basic_trie<char16_t> u16trie;
+    [[maybe_unused]] typedef basic_static_trie<char16_t> u16static_trie;
+    [[maybe_unused]] typedef basic_trie<char32_t> u32trie;
+    [[maybe_unused]] typedef basic_static_trie<char32_t> u32static_trie;
 }
 
 

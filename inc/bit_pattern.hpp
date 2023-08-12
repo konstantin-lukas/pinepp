@@ -17,7 +17,8 @@ namespace pinepp {
 
         /**
          * @details
-         * Constructs a new bit pattern from a string representing bits or a hexadecimal number.
+         * Constructs a new bit pattern from a string representing bits or a hexadecimal number. Note that the right most
+         * characters are interpreted as the least significant bits. This is only relevant when iterating over the pattern.
          * @param str
          */
         explicit bit_pattern(const std::string& str);

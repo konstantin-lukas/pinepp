@@ -44,7 +44,7 @@ namespace pinepp {
 
         /**
          * @details
-         * Sets the bit at position \p index to 1 if \p value is true or 0 otherwise.
+         * Sets the bit at position \p m_Index to 1 if \p value is true or 0 otherwise.
          * @param index Position of the bit to modify
          * @param value Value of the bit to modify
          */

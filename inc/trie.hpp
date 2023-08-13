@@ -20,19 +20,31 @@ namespace pinepp {
      * @tparam T The char type to determine the kind of string to use,
      * e.g. char for std::basic_string<char> (which is std::string).
      */
-    template <char_type T = char>
+    // TODO: ITERATOR
     // TODO: COPY/MOVE SEMANTICS
-    // TODO: DELETER (NO SMART PTRS)
-    // TODO: INITIALIZER LIST CONSTRUCTOR
-    // TODO: LONGEST PREFIX MATCH
+    template <char_type T = char>
     class basic_trie {
+    private:
+        struct s_Node {
+            std::unordered_map<T, std::unique_ptr<s_Node>> m_Children;
+            bool m_IsFinal = false;
+        };
+        std::size_t m_Size;
+        std::unique_ptr<s_Node> m_Root;
     public:
         constexpr basic_trie() : m_Size(0), m_Root(std::make_unique<s_Node>()) {};
+        constexpr basic_trie(std::initializer_list<std::basic_string<T>> words) {
+            m_Size = 0;
+            m_Root = std::make_unique<s_Node>();
+            for (const auto& word : words) {
+                this->insert(word);
+            }
+        };
         constexpr void insert(const std::basic_string<T>& string) {
             auto* node = m_Root.get();
             bool isNew = false;
             for (const auto& c : string) {
-                if (node->m_Children.find(c) == node->m_Children.end()) {
+                if (!node->m_Children.contains(c)) {
                     node->m_Children.emplace(c, std::make_unique<s_Node>());
                     isNew = true;
                 }
@@ -46,7 +58,7 @@ namespace pinepp {
         constexpr bool contains(const std::basic_string<T>& string) const {
             auto* node = m_Root.get();
             for (const auto& c : string) {
-                if (node->m_Children.find(c) == node->m_Children.end())
+                if (!node->m_Children.contains(c))
                     return false;
                 node = node->m_Children[c].get();
             }
@@ -58,14 +70,61 @@ namespace pinepp {
         [[nodiscard]] constexpr std::size_t length() {
             return m_Size;
         }
-    private:
-        struct s_Node {
-            std::unordered_map<T, std::unique_ptr<s_Node>> m_Children;
-            bool m_IsFinal = false;
+        constexpr int longest_prefix(const std::basic_string<T>& string) const {
+            auto* node = m_Root.get();
+            int count = 0;
+            for (const auto c : string) {
+                if (node->m_Children.contains(c)) {
+                    count++;
+                    node = node->m_Children[c].get();
+                } else {
+                    break;
+                }
+            }
+            return count;
+        }
+        /*
+        class iterator {
+        public:
+
+            explicit iterator(basic_trie<T>& trie) : m_trie(trie) {}
+
+            iterator& operator++() {}
+
+            std::basic_string<T> operator*() {}
+
+            bool operator==(const iterator& other) const {}
+
+            bool operator!=(const iterator& other) const {}
+
+        private:
+            basic_trie<T>& m_trie;
+            std::stack<std::pair<T, s_Node*>> m_nodeStack;
+            std::basic_string<T> m_currentWord;
         };
-        std::size_t m_Size;
-        std::unique_ptr<s_Node> m_Root;
+
+        iterator begin() {
+            return iterator(*this);
+        }
+
+        iterator end() {
+            return iterator(*this);
+        }*/
     };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     /**
@@ -95,6 +154,25 @@ namespace pinepp {
                 seenCharacters.insert(c);
             }
             m_Root = new T*[m_Alphabet.size()]{nullptr};
+        };
+        constexpr basic_static_trie(const std::size_t wordLength, const std::basic_string<T>& alphabet, std::initializer_list<std::basic_string<T>> words) :
+        m_Alphabet(alphabet),
+        m_WordLength(wordLength) {
+            if (wordLength == 0)
+                throw std::invalid_argument("Word length has to be at least one");
+            if (alphabet.size() == 0)
+                throw std::invalid_argument("Alphabet length has to be at least one");
+            std::unordered_set<T> seenCharacters;
+            for (char c : alphabet) {
+                if (seenCharacters.contains(c))
+                    throw std::invalid_argument("Alphabet may only contain unique characters");
+                seenCharacters.insert(c);
+            }
+            m_Size = 0;
+            m_Root = new T*[m_Alphabet.size()]{nullptr};
+            for (const auto& word : words) {
+                this->insert(word);
+            }
         };
         constexpr ~basic_static_trie() {
             recursive_delete(m_Root);
@@ -137,6 +215,18 @@ namespace pinepp {
         }
         [[nodiscard]] constexpr std::size_t length() {
             return m_Size;
+        }
+        constexpr int longest_prefix(const std::basic_string<T>& string) const {
+            auto node = m_Root;
+            int count = 0;
+            for (const auto& c : string) {
+                auto index = m_Alphabet.find(c);
+                if (index == std::string::npos || node[index] == nullptr)
+                    break;
+                count++;
+                node = reinterpret_cast<T**>(node[index]);
+            }
+            return count;
         }
     private:
         void recursive_delete(T** node) {

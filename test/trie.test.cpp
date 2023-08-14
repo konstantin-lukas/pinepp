@@ -92,21 +92,66 @@ TYPED_TEST(TrieTest, LetsYouIterateOverWordsInTrie) {
     words.insert(this->b);
     words.insert(this->c);
     words.insert(this->d);
-    //words.insert(this->e);
+    words.insert(this->e);
     pinepp::basic_trie<TypeParam> trie{};
     EXPECT_NO_THROW(trie.insert(this->a));
     EXPECT_NO_THROW(trie.insert(this->b));
     EXPECT_NO_THROW(trie.insert(this->c));
     EXPECT_NO_THROW(trie.insert(this->d));
-    //EXPECT_NO_THROW(trie.insert(this->e));
+    EXPECT_NO_THROW(trie.insert(this->e));
 
     size_t count = 0;
+    bool saw_empty_word = false;
     for (const auto &word: trie) {
         EXPECT_TRUE(words.contains(word));
+        if (word == this->e)
+            saw_empty_word = true;
         count++;
     }
+    EXPECT_TRUE(saw_empty_word);
     EXPECT_EQ(trie.size(), count);
     EXPECT_EQ(words.size(), count);
+
+
+    pinepp::basic_trie<TypeParam> trie2{this->e};
+    EXPECT_EQ(*trie2.begin(), this->e);
+    saw_empty_word = false;
+    for (const auto &word: trie2) {
+        if (word == this->e)
+            saw_empty_word = true;
+    }
+    EXPECT_TRUE(saw_empty_word);
+
+
+    pinepp::basic_trie<TypeParam> trie3{};
+    saw_empty_word = false;
+    for (const auto &word: trie3) {
+        if (word == this->e)
+            saw_empty_word = true;
+    }
+    EXPECT_FALSE(saw_empty_word);
+
+    trie3.insert(this->b);
+    for (const auto &word: trie3) {
+        if (word == this->e)
+            saw_empty_word = true;
+    }
+    EXPECT_FALSE(saw_empty_word);
+
+    trie3.insert(this->e);
+    for (const auto &word: trie3) {
+        if (word == this->e)
+            saw_empty_word = true;
+    }
+    EXPECT_TRUE(saw_empty_word);
+
+}
+
+
+TYPED_TEST(TrieTest, IteratorHasArrowOperator) {
+    pinepp::basic_trie<TypeParam> trie{};
+    EXPECT_NO_THROW(trie.insert(this->a));
+    EXPECT_EQ(this->a.size(), trie.begin()->size());
 }
 /*
 TYPED_TEST(TrieTest, CopyConstructor) {
@@ -180,7 +225,7 @@ public:
             d = U"こんにちは！";
             e = U"";
             f = U"ありがとう";
-            alphabet = U"こんにちは！ありがとう";
+            alphabet = U"こんにちはわ！ありがとう";
         }
     }
 };
@@ -221,4 +266,16 @@ TYPED_TEST(StaticTrieTest, LongestPrefix) {
     EXPECT_EQ(trie.longest_prefix(this->c),0);
     EXPECT_NO_THROW(trie.insert(this->a));
     EXPECT_EQ(trie.longest_prefix(this->c),4);
+}
+
+TYPED_TEST(StaticTrieTest, LetsYouIterateOverWordsInTrie) {
+    pinepp::basic_static_trie<TypeParam> trie{5, this->alphabet, {this->a, this->c, this->f}};
+    std::unordered_set<std::basic_string<TypeParam>> words{this->a, this->c, this->f};
+    size_t count = 0;
+    for (const auto& word : trie) {
+        EXPECT_TRUE(words.contains(word));
+        count++;
+    }
+    EXPECT_EQ(trie.size(), count);
+    EXPECT_EQ(words.size(), count);
 }

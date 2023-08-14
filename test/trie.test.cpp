@@ -70,6 +70,24 @@ TYPED_TEST(TrieTest, TestsInitializerListConstructor) {
     EXPECT_EQ(trie.size(), 3);
 }
 
+TYPED_TEST(TrieTest, RemoveMemberFunction) {
+    pinepp::basic_trie<TypeParam> trie{this->a,this->b,this->c};
+    trie.remove(this->e);
+    trie.remove(this->d);
+    trie.remove(this->b);
+    EXPECT_TRUE(trie.contains(this->a));
+    EXPECT_FALSE(trie.contains(this->b));
+    EXPECT_TRUE(trie.contains(this->c));
+    EXPECT_FALSE(trie.contains(this->d));
+    EXPECT_EQ(trie.size(), 2);
+    trie.insert(this->e);
+    EXPECT_TRUE(trie.contains(this->e));
+    EXPECT_EQ(trie.size(), 3);
+    trie.remove(this->e);
+    EXPECT_FALSE(trie.contains(this->e));
+    EXPECT_EQ(trie.size(), 2);
+}
+
 TYPED_TEST(TrieTest, WorksWithEmptyString) {
     pinepp::basic_trie<TypeParam> trie{};
     EXPECT_FALSE(trie.contains(this->e));
@@ -336,4 +354,15 @@ TYPED_TEST(StaticTrieTest, MoveAssignment) {
     copy = trie;
     EXPECT_TRUE(copy.contains(this->a));
     EXPECT_FALSE(copy.contains(this->b));
+}
+
+TYPED_TEST(StaticTrieTest, RemoveMemberFunction) {
+    pinepp::basic_static_trie<TypeParam> trie{5, this->alphabet, {this->a, this->c, this->f}};
+    trie.remove(this->e);
+    trie.remove(this->d);
+    trie.remove(this->c);
+    EXPECT_TRUE(trie.contains(this->a));
+    EXPECT_FALSE(trie.contains(this->c));
+    EXPECT_TRUE(trie.contains(this->f));
+    EXPECT_EQ(trie.size(), 2);
 }

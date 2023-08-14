@@ -21,7 +21,6 @@ namespace pinepp {
      * @tparam T The char type to determine the kind of string to use,
      * e.g. char for std::basic_string<char> (which is std::string).
      */
-    // TODO: COPY/MOVE SEMANTICS
     template <char_type T = char>
     class basic_trie {
     private:
@@ -229,6 +228,34 @@ namespace pinepp {
                 }
             }
             return count;
+        }
+
+        void remove(const std::basic_string<T>& str) {
+            std::stack<s_Node*> nodes;
+            std::stack<T> symbols;
+            nodes.push(m_Root.get());
+            for (const auto c : str) {
+                if (nodes.top()->m_Children.contains(c)) {
+                    symbols.push(c);
+                    nodes.push(nodes.top()->m_Children[c].get());
+                } else {
+                    return;
+                }
+            }
+            if (!nodes.top()->m_IsFinal)
+                return;
+            while (!nodes.empty()) {
+                if (!nodes.top()->m_Children.empty()) {
+                    nodes.top()->m_IsFinal = false;
+                    m_Size--;
+                    return;
+                } else {
+                    nodes.pop();
+                    nodes.top()->m_Children.erase(symbols.top());
+                    symbols.top();
+                }
+            }
+            m_Size--;
         }
 
         [[nodiscard]] iterator begin() const {
@@ -529,6 +556,43 @@ namespace pinepp {
                 node = reinterpret_cast<T**>(node[index]);
             }
             return count;
+        }
+
+        void remove(const std::basic_string<T>& str) {
+            if (str.size() != m_WordLength)
+                return;
+            std::stack<T**> nodes;
+            std::stack<T> symbols;
+            nodes.push(m_Root);
+            for (const auto c : str) {
+                auto index = m_Alphabet.find(c);
+                if (nodes.top()[index]) {
+                    symbols.push(c);
+                    nodes.push(reinterpret_cast<T**>(nodes.top()[index]));
+                } else {
+                    return;
+                }
+            }
+            while (!nodes.empty()) {
+                bool hasChildren = false;
+                auto top = nodes.top();
+                for (decltype(m_Alphabet.size()) i = 0; i < m_Alphabet.size(); ++i) {
+                    if (top[i] != nullptr) {
+                        hasChildren = true;
+                        break;
+                    }
+                }
+                if (hasChildren) {
+                    m_Size--;
+                    return;
+                } else {
+                    delete[] nodes.top();
+                    nodes.pop();
+                    nodes.top()[m_Alphabet.find(symbols.top())] = nullptr;
+                    symbols.pop();
+                }
+            }
+            m_Size--;
         }
 
         [[nodiscard]] auto alphabet() const {

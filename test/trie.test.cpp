@@ -255,6 +255,8 @@ TYPED_TEST(StaticTrieTest, OnlyAddsExactWord) {
     EXPECT_ANY_THROW(trie.insert(this->b));
     EXPECT_FALSE(trie.contains(this->b));
     EXPECT_EQ(trie.size(), 1);
+    EXPECT_EQ(trie.alphabet(), this->alphabet);
+    EXPECT_EQ(trie.word_length(), 5);
 }
 
 TYPED_TEST(StaticTrieTest, RefusesToConstructWithInvalidArguments) {

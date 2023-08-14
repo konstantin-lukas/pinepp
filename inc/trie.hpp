@@ -464,7 +464,7 @@ namespace pinepp {
             }
             return *this;
         }
-        constexpr basic_static_trie& operator=(basic_static_trie&& other) {
+        constexpr basic_static_trie& operator=(basic_static_trie&& other) noexcept {
             if (this == &other)
                 return *this;
             recursive_delete(m_Root);
@@ -529,6 +529,14 @@ namespace pinepp {
                 node = reinterpret_cast<T**>(node[index]);
             }
             return count;
+        }
+
+        [[nodiscard]] auto alphabet() const {
+            return m_Alphabet;
+        }
+
+        [[nodiscard]] auto word_length() const {
+            return m_WordLength;
         }
 
         [[nodiscard]] iterator begin() const {

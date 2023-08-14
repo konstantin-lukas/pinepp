@@ -85,54 +85,29 @@ TYPED_TEST(TrieTest, LongestPrefix) {
     EXPECT_NO_THROW(trie.insert(this->a));
     EXPECT_EQ(trie.longest_prefix(this->c),4);
 }
-/*
+
 TYPED_TEST(TrieTest, LetsYouIterateOverWordsInTrie) {
-    using CharT = TypeParam;
-    std::basic_string<CharT> a,b,c,d;
-    if constexpr (std::same_as<CharT, char>) {
-        a = "Hello";
-        b = "Hell";
-        c = "Hella";
-        d = "Hello!";
-    } else if constexpr (std::same_as<CharT, wchar_t>) {
-        a = L"Hello";
-        b = L"Hell";
-        c = L"Hella";
-        d = L"Hello!";
-    } else if constexpr (std::same_as<CharT, char8_t>) {
-        a = u8"Hello";
-        b = u8"Hell";
-        c = u8"Hella";
-        d = u8"Hello!";
-    } else if constexpr (std::same_as<CharT, char16_t>) {
-        a = u"Hello";
-        b = u"Hell";
-        c = u"Hella";
-        d = u"Hello!";
-    } else if constexpr (std::same_as<CharT, char32_t>) {
-        a = U"こんにちは";
-        b = U"こんにち";
-        c = U"こんにちわ";
-        d = U"こんにちは！";
-    }
-    std::unordered_set<std::basic_string<CharT>> words{};
-    words.insert(a);
-    words.insert(b);
-    words.insert(c);
-    words.insert(d);
-    pinepp::basic_trie<CharT> trie{};
-    EXPECT_NO_THROW(trie.insert(a));
-    EXPECT_NO_THROW(trie.insert(b));
-    EXPECT_NO_THROW(trie.insert(c));
-    EXPECT_NO_THROW(trie.insert(d));
+    std::unordered_set<std::basic_string<TypeParam>> words{};
+    words.insert(this->a);
+    words.insert(this->b);
+    words.insert(this->c);
+    words.insert(this->d);
+    //words.insert(this->e);
+    pinepp::basic_trie<TypeParam> trie{};
+    EXPECT_NO_THROW(trie.insert(this->a));
+    EXPECT_NO_THROW(trie.insert(this->b));
+    EXPECT_NO_THROW(trie.insert(this->c));
+    EXPECT_NO_THROW(trie.insert(this->d));
+    //EXPECT_NO_THROW(trie.insert(this->e));
+
     size_t count = 0;
-    for (const auto& word : trie) {
+    for (const auto &word: trie) {
         EXPECT_TRUE(words.contains(word));
         count++;
     }
     EXPECT_EQ(trie.size(), count);
     EXPECT_EQ(words.size(), count);
-}*/
+}
 /*
 TYPED_TEST(TrieTest, CopyConstructor) {
     using CharT = TypeParam;

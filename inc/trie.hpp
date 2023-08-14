@@ -5,10 +5,11 @@
 #ifndef PINEPP_TRIE_HPP
 #define PINEPP_TRIE_HPP
 #include <cstddef>
-#include <unordered_map>
+#include <map>
 #include <memory>
 #include <vector>
 #include <unordered_set>
+#include <stack>
 #include "concepts.hpp"
 namespace pinepp {
 
@@ -26,7 +27,7 @@ namespace pinepp {
     class basic_trie {
     private:
         struct s_Node {
-            std::unordered_map<T, std::unique_ptr<s_Node>> m_Children;
+            std::map<T, std::unique_ptr<s_Node>> m_Children;
             bool m_IsFinal = false;
         };
         std::size_t m_Size;
@@ -83,33 +84,110 @@ namespace pinepp {
             }
             return count;
         }
-        /*
         class iterator {
         public:
 
-            explicit iterator(basic_trie<T>& trie) : m_trie(trie) {}
+            iterator(basic_trie<T>& trie, bool end) : m_Trie(trie) {
+                m_NodeStack.push(m_Trie.m_Root.get());
+                if (end) {
+                    m_Index = m_Trie.size();
+                } else {
+                    m_Index = 0;
+                    traverse();
+                    m_Index = 0;
+                }
+            }
 
-            iterator& operator++() {}
+            iterator& operator++() {
+                traverse();
+                return *this;
+            }
 
-            std::basic_string<T> operator*() {}
+            std::basic_string<T> operator*() {
+                return build_word();
+            }
 
-            bool operator==(const iterator& other) const {}
+            std::basic_string<T>* operator->() {
+                return &build_word();
+            }
 
-            bool operator!=(const iterator& other) const {}
+            bool operator==(const iterator& other) const {
+                return this->m_Index == other.m_Index;
+            }
+
+            bool operator!=(const iterator& other) const {
+                return this->m_Index != other.m_Index;
+            }
 
         private:
-            basic_trie<T>& m_trie;
-            std::stack<std::pair<T, s_Node*>> m_nodeStack;
-            std::basic_string<T> m_currentWord;
+            /**
+             * @brief Left hand side depth first traversal to find next element in trie.
+             */
+            void traverse() {
+                if (this->m_Index == m_Trie.size()) {
+                    // DONE ITERATING
+                    return;
+                }
+
+                while (true) {
+                    auto children = &m_NodeStack.top()->m_Children;
+                    auto next = m_SymbolStack.empty() || m_SymbolStack.size() == m_NodeStack.size() - 1
+                            ? children->begin()
+                            : children->upper_bound(m_SymbolStack.top());
+                    if (m_SymbolStack.size() > m_NodeStack.size() - 1)
+                        m_SymbolStack.pop();
+                    if (next == children->end()) {
+                        if (m_NodeStack.top() == m_Trie.m_Root.get()) {
+                            // DONE ITERATING
+                            m_Index++;
+                            return;
+                        } else {
+                            // BACKTRACK
+                            m_NodeStack.pop();
+                        }
+                    } else {
+                        // GO DEEPER
+                        m_SymbolStack.push(next->first);
+                        m_NodeStack.push(next->second.get());
+                    }
+                    // FOUND NEXT WORD
+                    if (m_NodeStack.top()->m_IsFinal && m_NodeStack.size() - 1  == m_SymbolStack.size()) {
+                        m_Index++;
+                        return;
+                    }
+                }
+
+            }
+
+            /**
+             * @brief Builds a word from the current symbol stack
+             * @returns The Word built from the current symbol stack
+             */
+            std::basic_string<T> build_word() {
+                std::stack<T> copy{m_SymbolStack};
+                std::basic_string<T> rv{};
+                rv.reserve(copy.size());
+                while (!copy.empty()) {
+                    rv.push_back(copy.top());
+                    copy.pop();
+                }
+                std::reverse(rv.begin(), rv.end());
+                return rv;
+            }
+
+            basic_trie<T>& m_Trie;
+            std::stack<s_Node*> m_NodeStack;
+            std::stack<T> m_SymbolStack;
+            size_t m_Index;
         };
 
         iterator begin() {
-            return iterator(*this);
+            return iterator{*this, false};
         }
 
         iterator end() {
-            return iterator(*this);
-        }*/
+            return iterator{*this, true};
+        }
     };
 
 

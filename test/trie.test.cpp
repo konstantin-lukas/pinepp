@@ -102,7 +102,7 @@ TYPED_TEST(TrieTest, LetsYouIterateOverWordsInTrie) {
 
     size_t count = 0;
     bool saw_empty_word = false;
-    for (const auto &word: trie) {
+    for (const auto& word : trie) {
         EXPECT_TRUE(words.contains(word));
         if (word == this->e)
             saw_empty_word = true;
@@ -153,33 +153,44 @@ TYPED_TEST(TrieTest, IteratorHasArrowOperator) {
     EXPECT_NO_THROW(trie.insert(this->a));
     EXPECT_EQ(this->a.size(), trie.begin()->size());
 }
-/*
+
 TYPED_TEST(TrieTest, CopyConstructor) {
-    using CharT = TypeParam;
-    std::basic_string<CharT> a,b;
-    if constexpr (std::same_as<CharT, char>) {
-        a = "Hello";
-        b = "Goodbye";
-    } else if constexpr (std::same_as<CharT, wchar_t>) {
-        a = L"Hello";
-        b = L"Goodbye";
-    } else if constexpr (std::same_as<CharT, char8_t>) {
-        a = u8"Hello";
-        b = u8"Goodbye";
-    } else if constexpr (std::same_as<CharT, char16_t>) {
-        a = u"Straße";
-        b = u"Goodbye";
-    } else if constexpr (std::same_as<CharT, char32_t>) {
-        a = U"こんにちは";
-        b = U"さようなら";
-    }
-    pinepp::basic_trie<CharT> trie{};
-    EXPECT_NO_THROW(trie.insert(a));
-    pinepp::basic_trie<CharT>copy{trie};
-    EXPECT_TRUE(copy.contains(a));
-    EXPECT_FALSE(copy.contains(b));
+    pinepp::basic_trie<TypeParam> trie{};
+    EXPECT_NO_THROW(trie.insert(this->a));
+    pinepp::basic_trie<TypeParam>copy{trie};
+    EXPECT_TRUE(copy.contains(this->a));
+    EXPECT_FALSE(copy.contains(this->b));
+    EXPECT_NO_THROW(trie.insert(this->c));
+    EXPECT_FALSE(copy.contains(this->c));
 }
-*/
+
+TYPED_TEST(TrieTest, MoveConstructor) {
+    pinepp::basic_trie<TypeParam> trie{};
+    EXPECT_NO_THROW(trie.insert(this->a));
+    pinepp::basic_trie<TypeParam>copy{std::move(trie)};
+    EXPECT_TRUE(copy.contains(this->a));
+    EXPECT_FALSE(copy.contains(this->b));
+}
+
+TYPED_TEST(TrieTest, CopyAssignment) {
+    pinepp::basic_trie<TypeParam> trie{};
+    EXPECT_NO_THROW(trie.insert(this->a));
+    pinepp::basic_trie<TypeParam>copy{};
+    EXPECT_NO_THROW(copy.insert(this->b));
+    copy = trie;
+    EXPECT_TRUE(copy.contains(this->a));
+    EXPECT_FALSE(copy.contains(this->b));
+}
+
+TYPED_TEST(TrieTest, MoveAssignment) {
+    pinepp::basic_trie<TypeParam> trie{};
+    EXPECT_NO_THROW(trie.insert(this->a));
+    pinepp::basic_trie<TypeParam>copy{};
+    EXPECT_NO_THROW(copy.insert(this->b));
+    copy = std::move(trie);
+    EXPECT_TRUE(copy.contains(this->a));
+    EXPECT_FALSE(copy.contains(this->b));
+}
 
 template <typename CharT>
 class StaticTrieTest : public testing::Test {
@@ -278,4 +289,49 @@ TYPED_TEST(StaticTrieTest, LetsYouIterateOverWordsInTrie) {
     }
     EXPECT_EQ(trie.size(), count);
     EXPECT_EQ(words.size(), count);
+}
+
+TYPED_TEST(StaticTrieTest, IteratorHasArrowOperator) {
+    pinepp::basic_static_trie<TypeParam> trie{5, this->alphabet};
+    EXPECT_NO_THROW(trie.insert(this->a));
+    EXPECT_EQ(this->a.size(), trie.begin()->size());
+}
+
+TYPED_TEST(StaticTrieTest, CopyConstructor) {
+    pinepp::basic_static_trie<TypeParam> trie{5, this->alphabet};
+    EXPECT_NO_THROW(trie.insert(this->a));
+    pinepp::basic_static_trie<TypeParam> copy{trie};
+    EXPECT_TRUE(copy.contains(this->a));
+    EXPECT_FALSE(copy.contains(this->f));
+    EXPECT_NO_THROW(trie.insert(this->c));
+    EXPECT_FALSE(copy.contains(this->c));
+}
+
+TYPED_TEST(StaticTrieTest, MoveConstructor) {
+    pinepp::basic_static_trie<TypeParam> trie{5, this->alphabet};
+    EXPECT_NO_THROW(trie.insert(this->a));
+    pinepp::basic_static_trie<TypeParam>copy{std::move(trie)};
+    EXPECT_TRUE(copy.contains(this->a));
+    EXPECT_FALSE(copy.contains(this->f));
+}
+
+TYPED_TEST(StaticTrieTest, CopyAssignment) {
+    pinepp::basic_static_trie<TypeParam> trie{5, this->alphabet};
+    EXPECT_NO_THROW(trie.insert(this->a));
+    pinepp::basic_static_trie<TypeParam>copy{4, this->alphabet};
+    EXPECT_NO_THROW(copy.insert(this->b));
+    copy = trie;
+    EXPECT_TRUE(copy.contains(this->a));
+    EXPECT_FALSE(copy.contains(this->b));
+}
+
+
+TYPED_TEST(StaticTrieTest, MoveAssignment) {
+    pinepp::basic_static_trie<TypeParam> trie{5, this->alphabet};
+    EXPECT_NO_THROW(trie.insert(this->a));
+    pinepp::basic_static_trie<TypeParam>copy{4, this->alphabet};
+    EXPECT_NO_THROW(copy.insert(this->b));
+    copy = trie;
+    EXPECT_TRUE(copy.contains(this->a));
+    EXPECT_FALSE(copy.contains(this->b));
 }

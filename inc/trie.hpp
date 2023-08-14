@@ -34,7 +34,7 @@ namespace pinepp {
         class iterator {
         public:
 
-            iterator(basic_trie<T>& trie, bool end) : m_Trie(trie) {
+            iterator(const basic_trie<T>& trie, bool end) : m_Trie(trie) {
                 m_NodeStack.push(m_Trie.m_Root.get());
                 if (end) {
                     m_Index = m_Trie.size();
@@ -133,7 +133,7 @@ namespace pinepp {
                 return rv;
             }
 
-            basic_trie<T>& m_Trie;
+            const basic_trie<T>& m_Trie;
             std::stack<s_Node*> m_NodeStack;
             std::stack<T> m_SymbolStack;
             size_t m_Index;
@@ -152,9 +152,41 @@ namespace pinepp {
             m_Size = 0;
             m_Root = std::make_unique<s_Node>();
             for (const auto& word : words) {
-                this->insert(word);
+                insert(word);
             }
         };
+        constexpr basic_trie(const basic_trie<T>& other) {
+            m_Size = 0;
+            m_Root = std::make_unique<s_Node>();
+            for (const auto& word : other) {
+                insert(word);
+            }
+        }
+        constexpr basic_trie(basic_trie<T>&& other) noexcept {
+            m_Size = other.m_Size;
+            m_Root = std::move(other.m_Root);
+            other.m_Size = 0;
+            other.m_Root = std::make_unique<s_Node>();
+        }
+        constexpr basic_trie& operator=(const basic_trie& other) {
+            if (this == &other)
+                return *this;
+            m_Size = 0;
+            m_Root = std::make_unique<s_Node>();
+            for (const auto& word : other) {
+                insert(word);
+            }
+            return *this;
+        }
+        constexpr basic_trie& operator=(basic_trie&& other) noexcept {
+            if (this == &other)
+                return *this;
+            m_Size = other.m_Size;
+            m_Root = std::move(other.m_Root);
+            other.m_Size = 0;
+            other.m_Root = std::make_unique<s_Node>();
+            return *this;
+        }
         constexpr void insert(const std::basic_string<T>& string) {
             auto* node = m_Root.get();
             bool isNew = false;
@@ -179,10 +211,10 @@ namespace pinepp {
             }
             return node->m_IsFinal;
         }
-        [[nodiscard]] constexpr std::size_t size() {
+        [[nodiscard]] constexpr std::size_t size() const {
             return m_Size;
         }
-        [[nodiscard]] constexpr std::size_t length() {
+        [[nodiscard]] constexpr std::size_t length() const {
             return m_Size;
         }
         [[nodiscard]] constexpr int longest_prefix(const std::basic_string<T>& string) const {
@@ -199,11 +231,11 @@ namespace pinepp {
             return count;
         }
 
-        iterator begin() {
+        [[nodiscard]] iterator begin() const {
             return iterator{*this, false};
         }
 
-        iterator end() {
+        [[nodiscard]] iterator end() const {
             return iterator{*this, true};
         }
     };
@@ -243,14 +275,14 @@ namespace pinepp {
             }
             delete[] node;
         }
-        const std::basic_string<T> m_Alphabet;
-        const std::size_t m_WordLength;
+        std::basic_string<T> m_Alphabet;
+        std::size_t m_WordLength;
         std::size_t m_Size;
         T** m_Root;
         class iterator {
         public:
 
-            iterator(basic_static_trie<T>& trie, bool end) : m_Trie(trie) {
+            iterator(const basic_static_trie<T>& trie, bool end) : m_Trie(trie) {
                 m_NodeStack.push(m_Trie.m_Root);
                 if (end) {
                     m_Index = m_Trie.size();
@@ -355,7 +387,7 @@ namespace pinepp {
                 return rv;
             }
 
-            basic_static_trie<T>& m_Trie;
+            const basic_static_trie<T>& m_Trie;
             std::stack<T**> m_NodeStack;
             std::stack<int> m_SymbolStack;
             size_t m_Index;
@@ -401,9 +433,49 @@ namespace pinepp {
             m_Size = 0;
             m_Root = new T*[m_Alphabet.size()]{nullptr};
             for (const auto& word : words) {
-                this->insert(word);
+                insert(word);
             }
         };
+        constexpr basic_static_trie(const basic_static_trie<T>& other) :
+        m_Alphabet(other.m_Alphabet), m_WordLength(other.m_WordLength) {
+            m_Size = 0;
+            m_Root = new T*[m_Alphabet.size()]{nullptr};
+            for (const auto& word : other) {
+                insert(word);
+            }
+        }
+        constexpr basic_static_trie(basic_static_trie<T>&& other) noexcept :
+        m_Alphabet(other.m_Alphabet), m_WordLength(other.m_WordLength) {
+            m_Size = other.m_Size;
+            m_Root = other.m_Root;
+            other.m_Size = 0;
+            other.m_Root = new T*[m_Alphabet.size()]{nullptr};
+        }
+        constexpr basic_static_trie& operator=(const basic_static_trie& other) {
+            if (this == &other)
+                return *this;
+            recursive_delete(m_Root);
+            m_Alphabet = other.m_Alphabet;
+            m_WordLength = other.m_WordLength;
+            m_Size = 0;
+            m_Root = new T*[m_Alphabet.size()]{nullptr};
+            for (const auto& word : other) {
+                insert(word);
+            }
+            return *this;
+        }
+        constexpr basic_static_trie& operator=(basic_static_trie&& other) {
+            if (this == &other)
+                return *this;
+            recursive_delete(m_Root);
+            m_Alphabet = other.m_Alphabet;
+            m_WordLength = other.m_WordLength;
+            m_Size = other.m_Size;
+            m_Root = other.m_Root;
+            other.m_Root = new T*[m_Alphabet.size()]{nullptr};
+            other.m_Size = 0;
+            return *this;
+        }
         constexpr ~basic_static_trie() {
             recursive_delete(m_Root);
         }
@@ -440,10 +512,10 @@ namespace pinepp {
             }
             return true;
         }
-        [[nodiscard]] constexpr std::size_t size() {
+        [[nodiscard]] constexpr std::size_t size() const {
             return m_Size;
         }
-        [[nodiscard]] constexpr std::size_t length() {
+        [[nodiscard]] constexpr std::size_t length() const {
             return m_Size;
         }
         constexpr int longest_prefix(const std::basic_string<T>& string) const {
@@ -459,11 +531,11 @@ namespace pinepp {
             return count;
         }
 
-        iterator begin() {
+        [[nodiscard]] iterator begin() const {
             return iterator{*this, false};
         }
 
-        iterator end() {
+        [[nodiscard]] iterator end() const {
             return iterator{*this, true};
         }
     };

@@ -475,13 +475,29 @@ TEST(BitPatternResizeFunction, DoesntDoAnythingIfTheNewSizeIsTheSameAsTheOldOne)
 
 TEST(BitPattern, EqualsOperator) {
     using namespace pinepp;
-    bit_pattern bp{"0111011101"};
-    EXPECT_TRUE(bp == bp);
-    EXPECT_FALSE(bp != bp);
+    bit_pattern bp1{"0111011101"};
+    bit_pattern bp2{"0111011101"};
+    bit_pattern bp3{"1111011101"};
+    bit_pattern bp4{"011111101"};
+    EXPECT_TRUE(bp1 == bp1);
+    EXPECT_FALSE(bp1 != bp1);
+    EXPECT_TRUE(bp1 == bp2);
+    EXPECT_FALSE(bp1 != bp2);
+    EXPECT_TRUE(bp1 != bp3);
+    EXPECT_TRUE(bp1 != bp4);
 }
 
 TEST(BitPattern, Coverage) {
     using namespace pinepp;
     bit_pattern bp{"0111000101110"};
     EXPECT_EQ(bp, bp << 0);
+    EXPECT_EQ(bp, bp >> 0);
+    bp = "1";
+    EXPECT_EQ(bp, bp << 12);
+    EXPECT_EQ(bp, bp >> 12);
+
+    EXPECT_EQ(bit_pattern() + bp, bp);
+    EXPECT_EQ(bit_pattern() + bit_pattern(), bit_pattern());
+
+    EXPECT_TRUE(bp.begin() == bp.begin());
 }

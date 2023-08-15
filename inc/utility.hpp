@@ -9,6 +9,10 @@
 #include <iterator>
 #include "concepts.hpp"
 namespace pinepp {
+    /**
+     * @brief Utility class to check if a type \p T is a class type or a primitive type
+     * @tparam T
+     */
     template<typename T>
     class is_class {
     private:

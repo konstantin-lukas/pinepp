@@ -8,6 +8,9 @@
 #include <ostream>
 #include <vector>
 namespace pinepp {
+    /**
+     * @brief A bit_pattern is an array of ones and zeroes that you can do bit-wise operations on
+     */
     class bit_pattern {
     public:
         /**
@@ -56,6 +59,7 @@ namespace pinepp {
          */
         void reverse();
 
+    private:
         /**
          * @details The bit_pattern::iterator class is a non-standard type of iterator that returns integers that
          * represent a bit in a given location. The iterator cannot be used to modify the pattern.
@@ -71,7 +75,7 @@ namespace pinepp {
             const bit_pattern* mp_BitPattern;
             size_t m_Index = 0;
         };
-
+    public:
         /**
          * @returns An iterator on the first element. This is the least significant bit. If constructed from a string
          * this corresponds to the right most character.

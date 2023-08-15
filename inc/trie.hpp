@@ -14,6 +14,7 @@
 namespace pinepp {
 
     /**
+     * @brief Template class for storing strings without duplicates
      * @details A basic_trie is a structure that allows for constant time lookup and insertion of strings
      * (linear in the size of the inserted/searched string without duplicates. Its worst case space complexity is very high however.
      * It has O(n*k) space complexity where n is the amount of internal nodes
@@ -333,6 +334,7 @@ namespace pinepp {
 
 
     /**
+     * @brief Template class for storing strings of fixed length without duplicates using a limited alphabet
      * @details A basic_static_trie is very similar to a basic_trie with two major differences.
      * 1. It has a fixed alphabet
      * 2. It has a fixed word length

@@ -14,7 +14,9 @@ void pinepp::fetch(const std::string& url, const std::string& filepath, pinepp::
     if (file.is_open()) {
         file << reply;
         file.close();
-    } else throw;
+    } else {
+        throw std::runtime_error{"Could not open target file."};
+    };
 
 }
 

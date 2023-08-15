@@ -10,6 +10,9 @@
 
 namespace pinepp {
 
+    /**
+     * @brief A class for the stopping time and retrive seconds or nanoseconds
+     */
     class timer {
     public:
 

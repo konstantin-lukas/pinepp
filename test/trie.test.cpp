@@ -366,3 +366,31 @@ TYPED_TEST(StaticTrieTest, RemoveMemberFunction) {
     EXPECT_TRUE(trie.contains(this->f));
     EXPECT_EQ(trie.size(), 2);
 }
+
+TEST(Trie, Coverage) {
+    pinepp::trie trie{"Hello"};
+    trie.remove("Hello");
+    EXPECT_EQ(0, trie.size());
+    trie = pinepp::trie{""};
+    EXPECT_TRUE(trie.contains(""));
+    EXPECT_EQ(1, trie.size());
+    trie.remove("");
+    EXPECT_FALSE(trie.contains(""));
+    EXPECT_EQ(0, trie.size());
+    trie.insert("Hallo");
+    trie.insert("Hello");
+    trie.remove("Hallo");
+    EXPECT_FALSE(trie.contains("Hallo"));
+    EXPECT_TRUE(trie.contains("Hello"));
+    EXPECT_EQ(*trie.begin(), "Hello");
+    EXPECT_NE(trie.begin(), trie.end());
+    EXPECT_ANY_THROW(pinepp::static_trie(5, "ABCA"));
+    EXPECT_ANY_THROW(pinepp::static_trie(5, "ABCA", {"A", "B"}));
+    EXPECT_ANY_THROW(pinepp::static_trie(5, "", {"A", "B"}));
+    EXPECT_ANY_THROW(pinepp::static_trie(0, "ABC", {"A", "B"}));
+    pinepp::static_trie sTrie{5, "ABC"};
+    EXPECT_ANY_THROW(sTrie.insert("ABCDE"));
+    sTrie.insert("ABCAB");
+    sTrie.remove("ACCCC");
+    EXPECT_TRUE(sTrie.contains("ABCAB"));
+}

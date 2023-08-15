@@ -18,6 +18,13 @@ namespace pinepp {
         constexpr static bool value = test<T>(0);
     };
 
+    /**
+     * @details Write an iterable container to an ostream like an array, e.g. [1, 5, ..., 6].
+     * @tparam T The type of element contained in the iterable container
+     * @param iterable An iterable container
+     * @param os The stream to write to
+     * @return \p os
+     */
     template <printable_iterable T>
     std::ostream& print_iterable (const T& iterable, std::ostream& os) {
         os << '[';
@@ -31,6 +38,11 @@ namespace pinepp {
         return os;
     }
 
+    /**
+     * @details Print an iterable container to std::cout like an array, e.g. [1, 5, ..., 6].
+     * @tparam T The type of element contained in the iterable container
+     * @param iterable An iterable container
+     */
     template <printable_iterable T>
     void print_iterable (const T& iterable) {
         print_iterable<T>(iterable, std::cout);

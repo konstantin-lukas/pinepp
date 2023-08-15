@@ -244,18 +244,23 @@ namespace pinepp {
             }
             if (!nodes.top()->m_IsFinal)
                 return;
-            while (!nodes.empty()) {
+            while (true) {
                 if (!nodes.top()->m_Children.empty()) {
                     nodes.top()->m_IsFinal = false;
                     m_Size--;
                     return;
-                } else {
+                } else if (nodes.size() > 1) {
                     nodes.pop();
                     nodes.top()->m_Children.erase(symbols.top());
                     symbols.top();
+                } else {
+                    if (nodes.top()->m_IsFinal){
+                        nodes.top()->m_IsFinal = false;
+                        m_Size--;
+                    }
+                    return;
                 }
             }
-            m_Size--;
         }
 
         [[nodiscard]] iterator begin() const {
@@ -573,7 +578,7 @@ namespace pinepp {
                     return;
                 }
             }
-            while (!nodes.empty()) {
+            while (true) {
                 bool hasChildren = false;
                 auto top = nodes.top();
                 for (decltype(m_Alphabet.size()) i = 0; i < m_Alphabet.size(); ++i) {
@@ -592,7 +597,6 @@ namespace pinepp {
                     symbols.pop();
                 }
             }
-            m_Size--;
         }
 
         [[nodiscard]] auto alphabet() const {

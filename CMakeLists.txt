@@ -3,7 +3,9 @@ project(pinepp)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-set(CMAKE_CXX_FLAGS "-Wall -Werror -Wpedantic -DNDEBUG -O3 -g2 --coverage")
+set(CMAKE_CXX_FLAGS "-Wall -Werror -Wpedantic -DNDEBUG -O3 -g2")
+#FOR COVERAGE USE BELOW LINE INSTEAD OF ABOVE LINE
+#set(CMAKE_CXX_FLAGS "-Wall -Werror -Wpedantic -DNDEBUG -O3 -g2 --coverage")
 include(FetchContent)
 include(GoogleTest)
 

@@ -36,3 +36,14 @@ TEST(Timer, StopsTheTime) {
     v2 = t.get_ns();
     EXPECT_GT(v2 - v1, 100000);
 }
+
+TEST(Timer, Coverage) {
+    pinepp::timer t{};
+    EXPECT_NO_THROW(t.start());
+    EXPECT_NO_THROW(t.start());
+    EXPECT_NO_THROW(t.pause());
+    EXPECT_NO_THROW((void)t.get_ns());
+    EXPECT_NO_THROW((void)t.get_s());
+    EXPECT_NO_THROW(t.start());
+    EXPECT_NO_THROW((void)t.get_s());
+}

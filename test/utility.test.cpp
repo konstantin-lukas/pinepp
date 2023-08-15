@@ -5,6 +5,7 @@
 #include <string>
 #include <regex>
 #include <fstream>
+#include <sys/resource.h>
 #include "gtest/gtest.h"
 #include "utility.hpp"
 
@@ -43,7 +44,7 @@ TEST(PrintIterable, PrintsIterableContainersAsCommaSeparatedLists) {
 
 void fetchTestString(pinepp::http_tools tool) {
     using namespace pinepp;
-    const auto reply = fetch("https://www.google.com");
+    const auto reply = fetch("https://www.google.com", tool);
     std::regex regex("^<!DOCTYPE html>", std::regex_constants::icase);
     EXPECT_TRUE(regex_search(reply,regex));
 }
@@ -77,4 +78,13 @@ TEST(Fetch, CanUseWgetToRetrieveAResourceViaHTTPAndReturnItAsAString) {
 
 TEST(Fetch, CanUseWgetToRetrieveAResourceViaHTTPAndSaveItInAFile) {
     fetchTestFile(pinepp::http_tools::WGET);
+}
+
+TEST(Fetch, Coverage) {
+    using namespace pinepp;
+    EXPECT_THROW(fetch("https://konstantinlukas.de", "/uhghwao/wamk.txt"),std::runtime_error);
+    const rlimit lim{4,4};
+    setrlimit(RLIMIT_NOFILE, &lim);
+    EXPECT_THROW(fetch("https://konstantinlukas.de"),std::runtime_error);
+
 }

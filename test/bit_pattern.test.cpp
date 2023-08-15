@@ -472,3 +472,16 @@ TEST(BitPatternResizeFunction, DoesntDoAnythingIfTheNewSizeIsTheSameAsTheOldOne)
     output = testing::internal::GetCapturedStdout();
     EXPECT_EQ(output, "000001011101");
 }
+
+TEST(BitPattern, EqualsOperator) {
+    using namespace pinepp;
+    bit_pattern bp{"0111011101"};
+    EXPECT_TRUE(bp == bp);
+    EXPECT_FALSE(bp != bp);
+}
+
+TEST(BitPattern, Coverage) {
+    using namespace pinepp;
+    bit_pattern bp{"0111000101110"};
+    EXPECT_EQ(bp, bp << 0);
+}

@@ -17,8 +17,9 @@ namespace pinepp {
 
         /**
          * @details
-         * Constructs a new bit pattern from a string representing bits or a hexadecimal number. Note that the right most
-         * characters are interpreted as the least significant bits. This is only relevant when iterating over the pattern.
+         * Constructs a new bit pattern from a string representing bits or a hexadecimal number. Note that the
+         * right most characters are interpreted as the least significant bits. This is mostly relevant when
+         * iterating over the pattern.
          * @param str
          */
         explicit bit_pattern(const std::string& str);
@@ -55,6 +56,10 @@ namespace pinepp {
          */
         void reverse();
 
+        /**
+         * @details The bit_pattern::iterator class is a non-standard type of iterator that returns integers that
+         * represent a bit in a given location. The iterator cannot be used to modify the pattern.
+         */
         class iterator {
         public:
             explicit iterator(size_t index, const bit_pattern* ptr);
@@ -67,7 +72,15 @@ namespace pinepp {
             size_t m_Index = 0;
         };
 
+        /**
+         * @returns An iterator on the first element. This is the least significant bit. If constructed from a string
+         * this corresponds to the right most character.
+         */
         [[nodiscard]] iterator begin() const;
+
+        /**
+         * @returns An iterator one past the end. Do not dereference this iterator.
+         */
         [[nodiscard]] iterator end() const;
 
         /**
@@ -131,20 +144,48 @@ namespace pinepp {
         bit_pattern& operator=(bit_pattern&& other) noexcept;
 
         /**
-         * @details Resizes the bit pattern. if \p b doesn't equal the current size, bits get either cut off or
+         * @details Resizes the bit pattern. if \p n doesn't equal the current size, bits get either cut off or
          * padding bits with value 0 get inserted.
          * @param n The new size of the bit pattern.
          */
         bit_pattern& resize(size_t n);
 
         /**
+         * @details Checks if two bit_patterns contain the same pattern. Does not check if they are actually
+         * the same object.
+         */
+        bool operator==(const bit_pattern& other) const noexcept;
+
+        /**
+         * @returns The opposite result of the == operator
+         */
+        bool operator!=(const bit_pattern &other) const noexcept;
+
+        /**
          * @returns A string representing the bit pattern
          */
         [[nodiscard]] std::string str() const;
     private:
+        /**
+         * @brief The bytes that contain the bit pattern
+         */
         std::vector<uint8_t> m_RawBytes{};
+        /**
+         * @brief The amount of bits in the pattern. This is relevant to know because the pattern is saved in bytes.
+         */
         std::size_t m_Len{0};
+        /**
+         * @brief Writes the pattern to an ostream. The string will be in the same order as the string that you
+         * constructed it from, meaning the least significant bit will be on the right.
+         * @param os The ostream to write to
+         * @param pattern The pattern to write
+         * @return \p os
+         */
         friend std::ostream& operator<<(std::ostream& os, const bit_pattern& pattern);
+        /**
+         * @brief Internal helper function used by constructors and assignment operators to create a bit_pattern
+         * from a string.
+         */
         void from_string(const std::string& str);
     };
 }

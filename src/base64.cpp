@@ -54,8 +54,11 @@ std::string pinepp::base64_encode(const std::string& str) {
 std::string pinepp::base64_decode(const std::string& base64) {
 
     std::regex base64_pattern("^[A-Za-z0-9+/]+={0,2}$");
-    if (base64.size() % 4 != 0 || !std::regex_match(base64, base64_pattern))
+    if (base64.size() % 4 != 0 || !std::regex_match(base64, base64_pattern)) {
+        if (base64.empty())
+            return std::string{};
         throw std::invalid_argument{"Given string is not a valid base64 encoding"};
+    }
 
 
     const auto char_count = base64.size();

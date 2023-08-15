@@ -148,6 +148,26 @@ std::string pinepp::bit_pattern::str() const {
     return ss.str();
 }
 
+bool pinepp::bit_pattern::operator==(const pinepp::bit_pattern &other) const noexcept {
+    if (this->size() != other.size())
+        return false;
+    if (this == &other)
+        return true;
+    auto it1 = this->begin();
+    auto it2 = other.begin();
+    while (it1 != this->end() && it2 != other.end()) {
+        if (*it1 != *it2)
+            return false;
+        ++it1;
+        ++it2;
+    }
+    return true;
+}
+
+bool pinepp::bit_pattern::operator!=(const pinepp::bit_pattern &other) const noexcept {
+    return !(*this == other);
+}
+
 pinepp::bit_pattern& pinepp::bit_pattern::resize(size_t n) {
     if (m_Len == n)
         return *this;

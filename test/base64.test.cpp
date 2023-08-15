@@ -30,3 +30,40 @@ TEST(Base64EncodeFunction, CanCreateAnAsciiStringFromBase64) {
     // DOUBLE PADDING
     EXPECT_EQ("Hello, world!", base64_decode("SGVsbG8sIHdvcmxkIQ=="));
 }
+
+TEST(Base64, Coverage) {
+    using namespace pinepp;
+    std::string strings[] = {"8gh48gh<w4hwoko!!!!_:_,-.,...,-.,-303962++<|||||326##++623632kg"
+                             "esjhsjaqOIWHGHHAGUHAWDHufiwiugfwaGUFGWAUGFWAhgkwhagwhgwhaigwa++",
+                             "8gh48gh<w4hwoko!!!!_:_,-.,...,-.,-303962++<|||||326##++623632kg"
+                             "esjhsjaqOIWHGHHAGUHAWDHufiwiugfwaGUFGWAUGFWAhgkwhagwhgwhaigwa+",
+                             "8gh48gh<w4hwoko!!!!_:_,-.,...,-.,-303962++<|||||326##++623632kg"
+                             "esjhsjaqOIWHGHHAGUHAWDHufiwiugfwaGUFGWAUGFWAhgkwhagwhgwhaigwa",
+                             "8gh48gh<w4hwoko!!!!_:_,-.,...,-.,-303962++<|||||326##++623632kg"
+                             "esjhsjaqOIWHGHHAGUHAWDHufiwiugfwaGUFGWAUGFWAhgkwhagwhgwhaigw",
+                             "8gjh3j9pfj0jqfh3q",
+                             "8gjh3j9pfj0jqfh3",
+                             "8gjh3j9pfj0jqfh",
+                             "8gjh3j9pfj0jq",
+                             "    ",
+                             "   ",
+                             "  ",
+                             " ",
+                             "",
+                             "fwuA",
+                             "fwu",
+                             "fw",
+                             "f",
+                             "///",
+                             "+/+",
+                             "_^#,:-><()[]{}\n\t\r&%$§$?´`"};
+    for (const auto & str : strings) {
+        EXPECT_EQ(str, base64_decode(base64_encode(str)));
+    }
+    EXPECT_EQ("Base64 encoding with + symboo",
+              base64_decode("QmFzZTY0IGVuY29kaW5nIHdpdGggKyBzeW1ib2+="));
+    EXPECT_EQ("QmFzZTY0IGVuY29kaW5nIHdpdGggKyBzeW1ib28=",
+              base64_encode("Base64 encoding with + symboo"));
+    EXPECT_ANY_THROW(base64_decode(";;;;"));
+
+}

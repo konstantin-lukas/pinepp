@@ -15,7 +15,7 @@ namespace pinepp {
 
     /**
      * @details A basic_trie is a structure that allows for constant time lookup and insertion of strings
-     * (linear in the size of the inserted/searched string. Its worst case space complexity is very high however.
+     * (linear in the size of the inserted/searched string without duplicates. Its worst case space complexity is very high however.
      * It has O(n*k) space complexity where n is the amount of internal nodes
      * (one for each unique character inserted in one position) and k is the size of the alphabet.
      * @tparam T The char type to determine the kind of string to use,
@@ -146,7 +146,15 @@ namespace pinepp {
             };
         };
     public:
+        /**
+         * @brief Construct an empty trie
+         */
         constexpr basic_trie() : m_Size(0), m_Root(std::make_unique<s_Node>()) {};
+
+        /**
+         * @brief Construct a trie from a list of \p words
+         * @param words
+         */
         constexpr basic_trie(std::initializer_list<std::basic_string<T>> words) {
             m_Size = 0;
             m_Root = std::make_unique<s_Node>();
@@ -154,6 +162,9 @@ namespace pinepp {
                 insert(word);
             }
         };
+        /**
+         * @brief Copy constructor
+         */
         constexpr basic_trie(const basic_trie<T>& other) {
             m_Size = 0;
             m_Root = std::make_unique<s_Node>();
@@ -161,12 +172,18 @@ namespace pinepp {
                 insert(word);
             }
         }
+        /**
+         * @brief Move constructor
+         */
         constexpr basic_trie(basic_trie<T>&& other) noexcept {
             m_Size = other.m_Size;
             m_Root = std::move(other.m_Root);
             other.m_Size = 0;
             other.m_Root = std::make_unique<s_Node>();
         }
+        /**
+         * @brief Copy assignment operator
+         */
         constexpr basic_trie& operator=(const basic_trie& other) {
             if (this == &other)
                 return *this;
@@ -177,6 +194,9 @@ namespace pinepp {
             }
             return *this;
         }
+        /**
+         * @brief Move assignment operator
+         */
         constexpr basic_trie& operator=(basic_trie&& other) noexcept {
             if (this == &other)
                 return *this;
@@ -186,6 +206,10 @@ namespace pinepp {
             other.m_Root = std::make_unique<s_Node>();
             return *this;
         }
+        /**
+         * @details Insert a \p string into the trie
+         * @param string
+         */
         constexpr void insert(const std::basic_string<T>& string) {
             auto* node = m_Root.get();
             bool isNew = false;
@@ -201,6 +225,10 @@ namespace pinepp {
                 node->m_IsFinal = true;
             }
         }
+        /**
+         * @details Checks if the trie contains a \p string
+         * @param string
+         */
         [[nodiscard]] constexpr bool contains(const std::basic_string<T>& string) const {
             auto* node = m_Root.get();
             for (const auto& c : string) {
@@ -210,12 +238,25 @@ namespace pinepp {
             }
             return node->m_IsFinal;
         }
+        /**
+         * @returns The amount of unique words in the trie
+         */
         [[nodiscard]] constexpr std::size_t size() const {
             return m_Size;
         }
+        /**
+         * @returns The amount of unique words in the trie
+         */
         [[nodiscard]] constexpr std::size_t length() const {
             return m_Size;
         }
+
+        /**
+         * @param string
+         * @returns The length of the longest prefix you get by traversing the trie
+         * along the path of a \p string. For example if your trie only contains the word "Hello", then
+         * longest_prefix("Help me") will return 3.
+         */
         [[nodiscard]] constexpr int longest_prefix(const std::basic_string<T>& string) const {
             auto* node = m_Root.get();
             int count = 0;
@@ -230,11 +271,15 @@ namespace pinepp {
             return count;
         }
 
-        void remove(const std::basic_string<T>& str) {
+        /**
+         * @details Remove a \p string from the trie. Complexity: linear in the size of the string.
+         * @param string
+         */
+        void remove(const std::basic_string<T>& string) {
             std::stack<s_Node*> nodes;
             std::stack<T> symbols;
             nodes.push(m_Root.get());
-            for (const auto c : str) {
+            for (const auto c : string) {
                 if (nodes.top()->m_Children.contains(c)) {
                     symbols.push(c);
                     nodes.push(nodes.top()->m_Children[c].get());
@@ -433,6 +478,12 @@ namespace pinepp {
             };
         };
     public:
+
+        /**
+         * @details Construct an empty trie with a fixed \p wordLength and a fixed \p alphabet.
+         * @param wordLength
+         * @param alphabet
+         */
         constexpr basic_static_trie(const std::size_t wordLength, const std::basic_string<T>& alphabet) :
                 m_Alphabet(alphabet),
                 m_WordLength(wordLength),
@@ -449,6 +500,12 @@ namespace pinepp {
             }
             m_Root = new T*[m_Alphabet.size()]{nullptr};
         };
+        /**
+         * @details Construct a trie with a fixed \p wordLength and a fixed \p alphabet containing \p words.
+         * @param wordLength
+         * @param alphabet
+         * @param words
+         */
         constexpr basic_static_trie(const std::size_t wordLength, const std::basic_string<T>& alphabet, std::initializer_list<std::basic_string<T>> words) :
                 m_Alphabet(alphabet),
                 m_WordLength(wordLength) {
@@ -468,6 +525,9 @@ namespace pinepp {
                 insert(word);
             }
         };
+        /**
+         * @brief Copy constructor
+         */
         constexpr basic_static_trie(const basic_static_trie<T>& other) :
         m_Alphabet(other.m_Alphabet), m_WordLength(other.m_WordLength) {
             m_Size = 0;
@@ -476,6 +536,9 @@ namespace pinepp {
                 insert(word);
             }
         }
+        /**
+         * @brief Move constructor
+         */
         constexpr basic_static_trie(basic_static_trie<T>&& other) noexcept :
         m_Alphabet(other.m_Alphabet), m_WordLength(other.m_WordLength) {
             m_Size = other.m_Size;
@@ -483,6 +546,9 @@ namespace pinepp {
             other.m_Size = 0;
             other.m_Root = new T*[m_Alphabet.size()]{nullptr};
         }
+        /**
+         * @brief Copy assignment operator
+         */
         constexpr basic_static_trie& operator=(const basic_static_trie& other) {
             if (this == &other)
                 return *this;
@@ -496,6 +562,9 @@ namespace pinepp {
             }
             return *this;
         }
+        /**
+         * @brief Move assignment operator
+         */
         constexpr basic_static_trie& operator=(basic_static_trie&& other) noexcept {
             if (this == &other)
                 return *this;
@@ -508,9 +577,17 @@ namespace pinepp {
             other.m_Size = 0;
             return *this;
         }
+        /**
+         * @brief Destructor (uses a recursive method)
+         */
         constexpr ~basic_static_trie() {
             recursive_delete(m_Root);
         }
+        /**
+         * @details Insert a \p string into the trie. The strings length and used characters have to
+         * correspond with the trie's word length and alphabet. Otherwise an exception is thrown.
+         * @param string
+         */
         constexpr void insert(const std::basic_string<T>& string) {
             if (string.size() != m_WordLength)
                 throw std::length_error{"Length of string does not match word size of trie."};
@@ -531,6 +608,10 @@ namespace pinepp {
             if (isNew)
                 m_Size++;
         }
+        /**
+         * @details Check if the trie contains a certain \p string
+         * @param string
+         */
         constexpr bool contains(const std::basic_string<T>& string) const {
             if (string.size() != m_WordLength)
                 return false;
@@ -544,12 +625,24 @@ namespace pinepp {
             }
             return true;
         }
+        /**
+         * @returns The amount of unique words in the trie
+         */
         [[nodiscard]] constexpr std::size_t size() const {
             return m_Size;
         }
+        /**
+         * @returns The amount of unique words in the trie
+         */
         [[nodiscard]] constexpr std::size_t length() const {
             return m_Size;
         }
+        /**
+         * @param string
+         * @returns The length of the longest prefix you get by traversing the trie
+         * along the path of a \p string. For example if your trie only contains the word "Hello", then
+         * longest_prefix("Help me") will return 3.
+         */
         constexpr int longest_prefix(const std::basic_string<T>& string) const {
             auto node = m_Root;
             int count = 0;
@@ -563,13 +656,17 @@ namespace pinepp {
             return count;
         }
 
-        void remove(const std::basic_string<T>& str) {
-            if (str.size() != m_WordLength)
+        /**
+         * @details Remove a \p string from the trie.
+         * @param string
+         */
+        void remove(const std::basic_string<T>& string) {
+            if (string.size() != m_WordLength)
                 return;
             std::stack<T**> nodes;
             std::stack<T> symbols;
             nodes.push(m_Root);
-            for (const auto c : str) {
+            for (const auto c : string) {
                 auto index = m_Alphabet.find(c);
                 if (nodes.top()[index]) {
                     symbols.push(c);
@@ -599,10 +696,16 @@ namespace pinepp {
             }
         }
 
+        /**
+         * @return The current alphabet as a basic_string
+         */
         [[nodiscard]] auto alphabet() const {
             return m_Alphabet;
         }
 
+        /**
+         * @return The current word length
+         */
         [[nodiscard]] auto word_length() const {
             return m_WordLength;
         }
